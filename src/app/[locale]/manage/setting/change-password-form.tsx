@@ -37,14 +37,33 @@ export default function ChangePasswordForm() {
       toast({
         description: result.payload.message
       })
-    } catch (error) {
-      handleErrorApi({
-        error,
-        setError: form.setError
-      })
-    }
-  }
+    } catch (error: any) {
+      // Nếu có response từ API (ví dụ từ Axios hoặc fetch)
+      const errors = error?.response?.data?.errors || error?.errors;
 
+      if (errors && Array.isArray(errors)) {
+        for (const err of errors) {
+          // Đặt lỗi vào field (React Hook Form)
+          form.setError(err.field, { message: err.message });
+
+          // Nếu field là oldPassword → Hiển thị toast cảnh báo
+          if (err.field === "oldPassword") {
+            toast({
+              variant: "destructive",
+              description: err.message,
+            });
+          }
+        }
+      } else {
+        // fallback khi không phải lỗi field
+        toast({
+          variant: "destructive",
+          description:
+            error?.response?.data?.message || "Đổi mật khẩu thất bại",
+        });
+      }
+    }
+  };
   const reset = () => {
     form.reset()
   }
