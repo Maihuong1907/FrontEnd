@@ -37,6 +37,7 @@ export default function ChangePasswordForm() {
       toast({
         description: result.payload.message
       })
+      reset()
     } catch (error: any) {
       // Nếu có response từ API (ví dụ từ Axios hoặc fetch)
       const errors = error?.response?.data?.errors || error?.errors;
@@ -52,6 +53,7 @@ export default function ChangePasswordForm() {
               variant: "destructive",
               description: err.message,
             });
+           
           }
         }
       } else {
